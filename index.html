@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Resolution & DPI Control Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .resolution-inputs {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .separator {
+            font-size: 18px;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 1;
+            transition: background-color 0.2s;
+        }
+        
+        .set-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .set-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .reset-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .current-settings {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .current-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .description {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Screen Resolution Control</h1>
+        
+        <div class="control-group">
+            <label>Set New Resolution:</label>
+            <div class="resolution-inputs">
+                <input type="number" id="width" placeholder="Width" min="100" max="10000">
+                <span class="separator">X</span>
+                <input type="number" id="height" placeholder="Height" min="100" max="10000">
+            </div>
+            
+            <div class="button-group">
+                <button class="set-btn" id="setResolution">Set Resolution</button>
+                <button class="reset-btn" id="resetResolution">Reset to Default</button>
+            </div>
+        </div>
+        
+    <div class="panel">
+        <h1>DPI Control</h1>
+        
+        <div class="control-group">
+            <label>Set New DPI:</label>
+            <input type="number" id="dpi" placeholder="DPI Value" min="72" max="600">
+            
+            <div class="button-group">
+                <button class="set-btn" id="setDpi">Set DPI</button>
+                <button class="reset-btn" id="resetDpi">Reset to Default</button>
+            </div>
+        </div>
+
+    <script>
+        // Default values
+        const defaultResolution = { width: 1920, height: 1080 };
+        const defaultDpi = 96;
+        
+        let currentResolution = { ...defaultResolution };
+        let currentDpi = defaultDpi;
+        
+        // DOM elements
+        const widthInput = document.getElementById('width');
+        const heightInput = document.getElementById('height');
+        const dpiInput = document.getElementById('dpi');
+        const currentResolutionDisplay = document.getElementById('currentResolution');
+        const currentDpiDisplay = document.getElementById('currentDpi');
+        const setResolutionBtn = document.getElementById('setResolution');
+        const resetResolutionBtn = document.getElementById('resetResolution');
+        const setDpiBtn = document.getElementById('setDpi');
+        const resetDpiBtn = document.getElementById('resetDpi');
+        
+        // Update display with current values
+        function updateDisplay() {
+            currentResolutionDisplay.textContent = `Current: ${currentResolution.width} X ${currentResolution.height}`;
+            currentDpiDisplay.textContent = `Current: ${currentDpi} DPI`;
+        }
+        
+        // Set new resolution
+        setResolutionBtn.addEventListener('click', function() {
+            const newWidth = parseInt(widthInput.value);
+            const newHeight = parseInt(heightInput.value);
+            
+            if (isNaN(newWidth) || isNaN(newHeight)) {
+                alert('Please enter valid width and height values');
+                return;
+            }
+            
+            if (newWidth < 100 || newWidth > 10000 || newHeight < 100 || newHeight > 10000) {
+                alert('Resolution must be between 100 and 10000');
+                return;
+            }
+            
+            currentResolution = { width: newWidth, height: newHeight };
+            updateDisplay();
+            
+            // In a real application, you would send this to your backend/API
+            console.log(`Resolution set to: ${newWidth}X${newHeight}`);
+            
+            // Clear inputs
+            widthInput.value = '';
+            heightInput.value = '';
+        });
+        
+        // Reset resolution to default
+        resetResolutionBtn.addEventListener('click', function() {
+            currentResolution = { ...defaultResolution };
+            updateDisplay();
+            console.log('Resolution reset to default');
+        });
+        
+        // Set new DPI
+        setDpiBtn.addEventListener('click', function() {
+            const newDpi = parseInt(dpiInput.value);
+            
+            if (isNaN(newDpi)) {
+                alert('Please enter a valid DPI value');
+                return;
+            }
+            
+            if (newDpi < 72 || newDpi > 600) {
+                alert('DPI must be between 72 and 600');
+                return;
+            }
+            
+            currentDpi = newDpi;
+            updateDisplay();
+            
+            // In a real application, you would send this to your backend/API
+            console.log(`DPI set to: ${newDpi}`);
+            
+            // Clear input
+            dpiInput.value = '';
+        });
+        
+        // Reset DPI to default
+        resetDpiBtn.addEventListener('click', function() {
+            currentDpi = defaultDpi;
+            updateDisplay();
+            console.log('DPI reset to default');
+        });
+        
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
